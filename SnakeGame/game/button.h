@@ -1,0 +1,36 @@
+#pragma once
+
+#define LONG_PRESS	3000
+
+#ifndef ARDUINO
+typedef unsigned char uint8_t;
+#else
+#include "Arduino.h"
+
+// Define IRAM_ATTR if not already defined by Arduino platform
+#ifndef IRAM_ATTR
+#define IRAM_ATTR
+#endif
+
+//unfortunately for interrupts to work buttons have to be defined globally.
+#define CREATE_INTERRUPT_BUTTON(NAME, PIN) \
+void _## NAME ##HandleISR(); \
+void IRAM_ATTR _## NAME ##ISR() { \
+  _## NAME ##HandleISR(); \
+}; \
+Button NAME(PIN, _## NAME ##ISR); \
+void _## NAME ##HandleISR() { \
+  NAME.handleInterrupt(); \
+};
+#endif
+
+class Button {
+  public:
+    Button();
+    #ifdef ARDUINO
+    Button(uint8_t pin, void (*isr)());
+    #endif
+    void handleInterrupt();
+    bool isPressed();
+    bool pressed = false;
+};
