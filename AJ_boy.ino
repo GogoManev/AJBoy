@@ -55,6 +55,9 @@ U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/13, /* data=*/1
 
 // silly cars humor
 
+// space trash
+#include "SpaceTrash/spacetrash.h"
+
 // c_ for controls
 const uint8_t c_up = 3;
 const uint8_t c_down = 4;
@@ -62,104 +65,6 @@ const uint8_t c_left;
 const uint8_t c_right;
 const uint8_t c_button1 = 2;
 const uint8_t c_button2;
-
-
-#define ST_FP 4
-
-/* object types */
-struct _st_ot_struct {
-  /* 
-    missle and hit: 
-      bit 0: player missle and trash
-      bit 1: trash, which might hit the player
-  */
-
-  uint8_t missle_mask; /* this object is a missle: it might destroy something if the target is_hit_fn says so */
-  uint8_t hit_mask;    /* if missle_mask & hit_mask is != 0  then the object can be destroyed */
-  uint8_t points;
-  uint8_t draw_fn;
-  uint8_t move_fn;
-  /* ST_MOVE_FN_NONE, ST_MOVE_FN_X_SLOW */
-  uint8_t destroy_fn; /* object can be destroyed by a missle (e.g. a missle from the space ship) */
-                      /* ST_DESTROY_FN_NONE, ST_DESTROY_FN_SPLIT */
-  uint8_t is_hit_fn;  /* is hit procedure */
-                      /* ST_IS_HIT_FN_NONE, ST_IS_HIT_BBOX */
-  uint8_t fire_fn;
-  /* ST_FIRE_FN_NONE, ST_FIRE_FN_X_LEFT */
-};
-typedef struct _st_ot_struct st_ot;
-
-/*
-  objects, which are visible at the play area
-*/
-struct _st_obj_struct {
-  uint8_t ot; /* object type: zero means, object is not used */
-  int8_t tmp; /* generic value, used by ST_MOVE_IMPLODE */
-  /* absolute position */
-  /* LCD pixel position is x>>ST_FP and y>>ST_FP */
-  int16_t x, y;
-  int8_t x0, y0, x1, y1; /* object outline in pixel, reference point is at 0,0 */
-};
-typedef struct _st_obj_struct st_obj;
-
-#define ST_DRAW_NONE 0
-#define ST_DRAW_BBOX 1
-#define ST_DRAW_TRASH1 2
-#define ST_DRAW_PLAYER1 3
-#define ST_DRAW_TRASH2 4
-#define ST_DRAW_PLAYER2 5
-#define ST_DRAW_PLAYER3 6
-#define ST_DRAW_GADGET 7
-#define ST_DRAW_BACKSLASH 8
-#define ST_DRAW_SLASH 9
-#define ST_DRAW_BIG_TRASH 10
-
-#define ST_MOVE_NONE 0
-#define ST_MOVE_X_SLOW 1
-#define ST_MOVE_PX_NORMAL 2
-#define ST_MOVE_PX_FAST 3
-#define ST_MOVE_PLAYER 4
-#define ST_MOVE_PY 5
-#define ST_MOVE_NY 6
-#define ST_MOVE_IMPLODE 7
-#define ST_MOVE_X_FAST 8
-#define ST_MOVE_WALL 9
-#define ST_MOVE_NXPY 10
-#define ST_MOVE_NXNY 11
-
-#define ST_IS_HIT_NONE 0
-#define ST_IS_HIT_BBOX 1
-#define ST_IS_HIT_WALL 2
-
-#define ST_DESTROY_NONE 0
-#define ST_DESTROY_DISAPPEAR 1
-#define ST_DESTROY_TO_DUST 2
-#define ST_DESTROY_GADGET 3
-#define ST_DESTROY_PLAYER 4
-#define ST_DESTROY_PLAYER_GADGETS 5
-#define ST_DESTROY_BIG_TRASH 6
-
-#define ST_FIRE_NONE 0
-#define ST_FIRE_PLAYER1 1
-#define ST_FIRE_PLAYER2 2
-#define ST_FIRE_PLAYER3 3
-
-#define ST_OT_WALL_SOLID 1
-#define ST_OT_BIG_TRASH 2
-#define ST_OT_MISSLE 3
-#define ST_OT_TRASH1 4
-#define ST_OT_PLAYER 5
-#define ST_OT_DUST_PY 6
-#define ST_OT_DUST_NY 7
-#define ST_OT_TRASH_IMPLODE 8
-#define ST_OT_TRASH2 9
-#define ST_OT_PLAYER2 10
-#define ST_OT_PLAYER3 11
-#define ST_OT_GADGET 12
-#define ST_OT_GADGET_IMPLODE 13
-#define ST_OT_DUST_NXPY 14
-#define ST_OT_DUST_NXNY 15
-
 
 /*================================================================*/
 /* graphics object */
@@ -238,20 +143,10 @@ st_obj st_objects[ST_OBJ_CNT];
 uint8_t st_player_pos;
 
 /* points */
-#define ST_POINTS_PER_LEVEL 25
 uint16_t st_player_points;
 uint16_t st_player_points_delayed;
 uint16_t st_highscore = 0;
 
-/*================================================================*/
-/* overall game state */
-/*================================================================*/
-
-#define ST_STATE_PREPARE 0
-#define ST_STATE_IPREPARE 1
-#define ST_STATE_GAME 2
-#define ST_STATE_END 3
-#define ST_STATE_IEND 4
 
 uint8_t st_state = ST_STATE_PREPARE;
 
@@ -259,80 +154,8 @@ uint8_t st_state = ST_STATE_PREPARE;
 /* game difficulty */
 /*================================================================*/
 uint8_t st_difficulty = 1;
-#define ST_DIFF_VIS_LEN 30
-#define ST_DIFF_FP 5
 uint16_t st_to_diff_cnt = 0;
 
-/*================================================================*/
-/* bitmaps */
-/*================================================================*/
-
-const uint8_t st_bitmap_player1[] = {
-  /* 01100000 */ 0x060,
-  /* 11111000 */ 0x0f8,
-  /* 01111110 */ 0x07e,
-  /* 11111000 */ 0x0f8,
-  /* 01100000 */ 0x060
-};
-
-const uint8_t st_bitmap_player2[] = {
-  /* 01100000 */ 0x060,
-  /* 01111100 */ 0x078,
-  /* 01100000 */ 0x060,
-  /* 11100000 */ 0x0e0,
-  /* 11111000 */ 0x0f8,
-  /* 01111110 */ 0x07e,
-  /* 11111000 */ 0x0f8,
-  /* 01100000 */ 0x060
-};
-
-const uint8_t st_bitmap_player3[] = {
-  /* 01100000 */ 0x060,
-  /* 01111100 */ 0x078,
-  /* 01100000 */ 0x060,
-  /* 11100000 */ 0x0e0,
-  /* 11111000 */ 0x0f8,
-  /* 01111110 */ 0x07e,
-  /* 11111000 */ 0x0f8,
-  /* 11100000 */ 0x0e0,
-  /* 01100000 */ 0x060,
-  /* 01111100 */ 0x078,
-  /* 01100000 */ 0x060
-};
-
-const uint8_t st_bitmap_trash_5x5_1[] = {
-  /* 01110000 */ 0x070,
-  /* 11110000 */ 0x0f0,
-  /* 11111000 */ 0x0f8,
-  /* 01111000 */ 0x078,
-  /* 00110000 */ 0x030,
-};
-
-const uint8_t st_bitmap_trash_5x5_2[] = {
-  /* 00110000 */ 0x030,
-  /* 11111000 */ 0x0f8,
-  /* 11111000 */ 0x0f8,
-  /* 11110000 */ 0x0f0,
-  /* 01110000 */ 0x070,
-};
-
-const uint8_t st_bitmap_trash_7x7[] = {
-  /* 00111000 */ 0x038,
-  /* 01111100 */ 0x07c,
-  /* 11111100 */ 0x0fc,
-  /* 11111110 */ 0x0fe,
-  /* 11111110 */ 0x0fe,
-  /* 01111110 */ 0x07e,
-  /* 01111000 */ 0x078,
-};
-
-const uint8_t st_bitmap_gadget[] = {
-  /* 01110000 */ 0x070,
-  /* 11011000 */ 0x0d8,
-  /* 10001000 */ 0x088,
-  /* 11011000 */ 0x0d8,
-  /* 01110000 */ 0x070,
-};
 
 /*================================================================*/
 /* forward definitions */

@@ -9,11 +9,7 @@
 
 
 namespace Renderer {
-  #ifdef ARDUINO
-  void initialize();
-  #else
   void initialize(void*);
-  #endif
   void renderBorder();
   void renderSnake(Snake *snake);
   void renderFruit(Fruit *fruit);

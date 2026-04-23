@@ -28,7 +28,7 @@ Fruit fruit(&snake);
 void snake_start(void* u8g2) {
 #ifdef ARDUINO
 	Serial.println("Snake Game Started");
-	Renderer::initialize();
+	Renderer::initialize(u8g2);
 	
 	if(!snake.isAlive()) {
 		snake.restart();

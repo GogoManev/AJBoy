@@ -6,11 +6,14 @@
 #include "Arduino.h"
 namespace Renderer {
 
-  U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
+  U8G2_SSD1306_128X64_NONAME_F_HW_I2C* u8g2_ptr = nullptr;
 
-  void initialize() {
-    u8g2.begin();
-    u8g2.setFont(u8g2_font_6x10_tf);
+  void initialize(void* u8g) {
+    u8g2_ptr = (U8G2_SSD1306_128X64_NONAME_F_HW_I2C*)u8g;
+    if(u8g2_ptr) {
+      u8g2_ptr->begin();
+      u8g2_ptr->setFont(u8g2_font_6x10_tf);
+    }
   }
 
   unsigned long time_total = 0;
@@ -22,42 +25,45 @@ namespace Renderer {
   }
 
   void renderBorder() {
-    u8g2.drawFrame(0, 0, 128, 64);
+    if(u8g2_ptr) u8g2_ptr->drawFrame(0, 0, 128, 64);
   }
 
   void renderSnake(Snake *snake) {
+    if(!u8g2_ptr) return;
     const uint8_t **body = snake->getBody();
     for(int i = 0; i < Snake::BODY_WIDTH; i++) {
       for(int j = 0; j < Snake::BODY_HEIGHT; j++) {
         if(body[i][j] > 0) {
-          u8g2.drawBox(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          u8g2_ptr->drawBox(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
       }
     }
   }
 
   void renderFruit(Fruit * fruit) {
+    if(!u8g2_ptr) return;
     Position position = fruit->getPosition();
-    u8g2.drawFrame(position.x * CELL_SIZE + 1, position.y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+    u8g2_ptr->drawFrame(position.x * CELL_SIZE + 1, position.y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2);
   }
 
   void renderGameOver(Snake *snake) {
-    u8g2.drawBox(32, 20, 64, 22);
-    u8g2.setDrawColor(0);
-    u8g2.setCursor(34, 30);
-    u8g2.print("Game Over!");
-    u8g2.setCursor(34, 40);
-    u8g2.print("Points: ");
-    u8g2.print(snake->getPoints());
-    u8g2.setDrawColor(1);
+    if(!u8g2_ptr) return;
+    u8g2_ptr->drawBox(32, 20, 64, 22);
+    u8g2_ptr->setDrawColor(0);
+    u8g2_ptr->setCursor(34, 30);
+    u8g2_ptr->print("Game Over!");
+    u8g2_ptr->setCursor(34, 40);
+    u8g2_ptr->print("Points: ");
+    u8g2_ptr->print(snake->getPoints());
+    u8g2_ptr->setDrawColor(1);
   }
 
   void startFrame() {
-    u8g2.clearBuffer();
+    if(u8g2_ptr) u8g2_ptr->clearBuffer();
   }
 
   void endFrame() {
-    u8g2.sendBuffer();
+    if(u8g2_ptr) u8g2_ptr->sendBuffer();
   }
 
 }
