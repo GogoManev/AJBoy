@@ -26,8 +26,14 @@ U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/13, /* data=*/1
 const uint8_t c_up = 3;
 const uint8_t c_down = 4;
 const uint8_t c_button1 = 2;
+const uint8_t c_left;
+const uint8_t c_right;
 
+//space trash
 #include "SpaceTrash/spacetrash.h"
+
+// Pong 
+#include "Pong/pong.h"
 
 void spacetrash_start();
 void flappybird_start();
@@ -147,6 +153,10 @@ void loop(void) {
       break;
     case 3:
       flappybird_start();
+      gameMode = 0;
+      break;
+    case 4:
+      pong_start(&u8g2, c_up, c_down, c_left, c_right);
       gameMode = 0;
       break;
     default:
