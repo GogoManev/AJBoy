@@ -5,6 +5,8 @@
 #include "Arduino.h"
 #endif
 
+namespace Pong {
+
 // Game state
 Ball* g_ball = nullptr;
 Paddle* g_paddle1 = nullptr;
@@ -24,11 +26,15 @@ int g_p1_down_pin = -1;
 int g_p2_up_pin = -1;
 int g_p2_down_pin = -1;
 
+} // namespace Pong
+
 #ifdef ARDUINO
 
 void pong_start(void* u8g, int p1_up, int p1_down, int p2_up, int p2_down) {
+  using namespace Pong; // Local using only!
+  
   // Initialize renderer
-  Renderer::initialize(u8g);
+  PongRenderer::initialize(u8g);
   
   // Store button pins
   g_p1_up_pin = p1_up;
@@ -108,11 +114,7 @@ void pong_start(void* u8g, int p1_up, int p1_down, int p2_up, int p2_down) {
     }
     
     // Render
-    if (g_game_over) {
-      Renderer::renderGameOver(g_player1_score, g_player2_score, g_winner);
-    } else {
-      Renderer::renderAll(g_ball, g_paddle1, g_paddle2, g_player1_score, g_player2_score);
-    }
+    PongRenderer::renderAll(g_ball, g_paddle1, g_paddle2, g_player1_score, g_player2_score, g_winner);
   }
 }
 

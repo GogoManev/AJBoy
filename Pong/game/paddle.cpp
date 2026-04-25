@@ -1,5 +1,7 @@
 #include "paddle.h"
 
+namespace Pong {
+
 Paddle::Paddle(int x, int width, int height, int playfield_height)
     : width(width), height(height), playfield_height(playfield_height), 
       start_x(x), start_y(playfield_height / 2 - height / 2) {
@@ -66,3 +68,5 @@ bool Paddle::checkCollision(int ball_x, int ball_y, int ball_radius) const {
   }
   return false;
 }
+
+} // namespace Pong

@@ -1,4 +1,7 @@
 #include "ball.h"
+#include "paddle.h"
+
+namespace Pong {
 
 Ball::Ball(int playfield_width, int playfield_height)
     : playfield_width(playfield_width), playfield_height(playfield_height) {
@@ -83,3 +86,5 @@ int Ball::getVelocityX() const {
 int Ball::getVelocityY() const {
   return velocity_y;
 }
+
+} // namespace Pong

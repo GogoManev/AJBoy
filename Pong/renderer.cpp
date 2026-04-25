@@ -5,7 +5,8 @@
 #ifdef ARDUINO
 #include "Arduino.h"
 
-namespace Renderer {
+namespace Pong {
+namespace PongRenderer {
 
   U8G2* u8g2_ptr = nullptr;
 
@@ -64,7 +65,7 @@ namespace Renderer {
     u8g2_ptr->print(player2_score);
   }
 
-  void renderGameOver(int player1_score, int player2_score, int winner) {
+  void renderGameOver(int winner) {
     if(!u8g2_ptr) return;
     
     // Semi-transparent overlay (draw filled rectangle)
@@ -79,18 +80,22 @@ namespace Renderer {
   }
 
   void renderAll(Ball* ball, Paddle* paddle1, Paddle* paddle2, 
-                 int player1_score, int player2_score) {
+                 int player1_score, int player2_score, int winner) {
     if(!u8g2_ptr) return;
     
-    u8g2_ptr->clearBuffer();
-    
-    renderBorder(128, 64);
-    renderScore(player1_score, player2_score);
-    renderBall(ball);
-    renderPaddles(paddle1, paddle2);
-    
-    u8g2_ptr->sendBuffer();
+    u8g2_ptr->firstPage();
+    do {
+      renderBorder(128, 64);
+      renderScore(player1_score, player2_score);
+      renderBall(ball);
+      renderPaddles(paddle1, paddle2);
+      
+      if (winner != 0) {
+        renderGameOver(winner);
+      }
+    } while(u8g2_ptr->nextPage());
   }
+}
 }
 
 #endif

@@ -2,7 +2,7 @@
 
 #include "position.h"
 
-typedef unsigned char uint8_t;
+namespace Pong {
 
 class Paddle {
   public:
@@ -34,3 +34,5 @@ class Paddle {
     int start_x;
     int start_y;
 };
+
+} // namespace Pong

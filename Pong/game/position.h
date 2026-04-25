@@ -1,6 +1,8 @@
 #pragma once
 
-typedef unsigned char uint8_t;
+#include <stdint.h>
+
+namespace Pong {
 
 struct Position {
   int x;
@@ -13,3 +15,5 @@ struct Position {
     return x == other.x && y == other.y;
   }
 };
+
+} // namespace Pong

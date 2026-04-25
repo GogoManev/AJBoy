@@ -1,9 +1,10 @@
 #pragma once
 
 #include "position.h"
-#include "paddle.h"
 
-typedef unsigned char uint8_t;
+namespace Pong {
+
+class Paddle; // Forward declaration
 
 class Ball {
   public:
@@ -37,3 +38,5 @@ class Ball {
     void bounceOffWalls();
     void increaseDifficulty();
 };
+
+} // namespace Pong

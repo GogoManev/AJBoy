@@ -26,14 +26,18 @@ U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/13, /* data=*/1
 const uint8_t c_up = 3;
 const uint8_t c_down = 4;
 const uint8_t c_button1 = 2;
-const uint8_t c_left;
-const uint8_t c_right;
+const uint8_t c_left = 5;
+const uint8_t c_right = 6;
 
 //space trash
 #include "SpaceTrash/spacetrash.h"
 
 // Pong 
-#include "Pong/pong.h"
+#include "Pong/game/position.cpp"
+#include "Pong/game/ball.cpp"
+#include "Pong/game/paddle.cpp"
+#include "Pong/renderer.cpp"
+#include "Pong/pong.cpp"
 
 void spacetrash_start();
 void flappybird_start();
@@ -56,11 +60,9 @@ uint8_t gameMode = 0;
 const char *menuLabels[] = {
   "Space Trash",
   "Snake",
+  "Flappy Spaceship",
   "Pong",
-  "FLappy Bird",
-  "2",
-  "1",
-  "AC/DC",
+  "AJBoy text",
 };
 
 const int VISIBLE_ITEMS = 3;
@@ -106,8 +108,12 @@ void handleMenuSelect(int grrrrr) {
       //snake game
       gameMode = 2;
       break;
-    case 3:
+    case 2:
+      // pong
       gameMode = 3;
+      break;
+    case 3:
+      gameMode = 4;
       break;
   }
 }
@@ -156,7 +162,7 @@ void loop(void) {
       gameMode = 0;
       break;
     case 4:
-      pong_start(&u8g2, c_up, c_down, c_left, c_right);
+      pong_start(&u8g2, c_down, c_up, c_button1, c_left);
       gameMode = 0;
       break;
     default:
