@@ -29,6 +29,9 @@ class Button {
     Button();
     #ifdef ARDUINO
     Button(uint8_t pin, void (*isr)());
+    void begin();
+    uint8_t _pin;
+    void (*_isr)();
     #endif
     void handleInterrupt();
     bool isPressed();

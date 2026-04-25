@@ -12,11 +12,9 @@ Fruit::Fruit(Snake * snake) {
 
 void Fruit::randomize(Snake * snake) {
   uint8_t spaceCnt = 0;
-  const uint8_t **body = snake->getBody();
-  
   for(int i = 0; i < Snake::BODY_WIDTH; i++) {
     for(int j = 0; j < Snake::BODY_HEIGHT; j++) {
-      if(body[i][j] == 0) {
+      if(snake->getBodyAt(i, j) == 0) {
         spaceCnt++;
       }
     }
@@ -26,7 +24,7 @@ void Fruit::randomize(Snake * snake) {
   spaceCnt = 0;
   for(int i = 0; i < Snake::BODY_WIDTH; i++) {
     for(int j = 0; j < Snake::BODY_HEIGHT; j++) {
-      if(body[i][j] == 0) {
+      if(snake->getBodyAt(i, j) == 0) {
         if(targetSpace == spaceCnt) {
           this->position.x = i;
           this->position.y = j;

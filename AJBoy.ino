@@ -138,7 +138,7 @@ void loop(void) {
       gameMode = 0;
       break;
     case 2:
-      snake_start(0);
+      snake_start(&u8g2);
       break;
     default:
       gameMode = 0;

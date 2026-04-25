@@ -1,9 +1,7 @@
 #include "snake.h"
 
 Snake::Snake() {
-  this->body = new uint8_t *[Snake::BODY_WIDTH];
   for(uint8_t i = 0; i < Snake::BODY_WIDTH; i++) {
-    this->body[i] = new uint8_t[Snake::BODY_HEIGHT];
     for(uint8_t j = 0; j < Snake::BODY_HEIGHT; j++) {
       this->body[i][j] = 0;
     }
@@ -17,9 +15,6 @@ Snake::Snake() {
 }
 
 Snake::~Snake() {
-  for(uint8_t i = 0; i < Snake::BODY_WIDTH; i++) {
-    delete[] this->body[i];
-  }
 }
 
 Position Snake::nextHeadPosition() {
@@ -42,21 +37,12 @@ Position Snake::nextHeadPosition() {
 }
 
 void Snake::turn(Direction direction) {
-  if((direction + 2) % 4 != this->direction) {
-    this->turnDirection = direction;  
-  }
-  if(direction == RIGHT){
-	  if(this->direction == RIGHT)	this->turnDirection = DOWN;
-	  if(this->direction == LEFT)	this->turnDirection = UP;
-	  if(this->direction == UP)		this->turnDirection = RIGHT;
-	  if(this->direction == DOWN)	this->turnDirection = LEFT;
-  }
-  if(direction == LEFT){
-	  if(this->direction == RIGHT)	this->turnDirection = UP;
-	  if(this->direction == LEFT)	this->turnDirection = DOWN;
-	  if(this->direction == UP)		this->turnDirection = LEFT;
-	  if(this->direction == DOWN)	this->turnDirection = RIGHT;
-  }
+  if (direction == UP && this->direction == DOWN) return;
+  if (direction == DOWN && this->direction == UP) return;
+  if (direction == LEFT && this->direction == RIGHT) return;
+  if (direction == RIGHT && this->direction == LEFT) return;
+  
+  this->turnDirection = direction;
 }
 
 void Snake::advance() {
@@ -111,6 +97,6 @@ const Position Snake::getHeadPosition() {
   return this->head;
 }
 
-const uint8_t ** Snake::getBody() {
-  return (const uint8_t **)this->body;
+uint8_t Snake::getBodyAt(int x, int y) const {
+  return this->body[x][y];
 }

@@ -6,10 +6,10 @@
 #include "Arduino.h"
 namespace Renderer {
 
-  U8G2_SSD1306_128X64_NONAME_F_HW_I2C* u8g2_ptr = nullptr;
+  U8G2* u8g2_ptr = nullptr;
 
   void initialize(void* u8g) {
-    u8g2_ptr = (U8G2_SSD1306_128X64_NONAME_F_HW_I2C*)u8g;
+    u8g2_ptr = (U8G2*)u8g;
     if(u8g2_ptr) {
       u8g2_ptr->begin();
       u8g2_ptr->setFont(u8g2_font_6x10_tf);
@@ -30,10 +30,9 @@ namespace Renderer {
 
   void renderSnake(Snake *snake) {
     if(!u8g2_ptr) return;
-    const uint8_t **body = snake->getBody();
     for(int i = 0; i < Snake::BODY_WIDTH; i++) {
       for(int j = 0; j < Snake::BODY_HEIGHT; j++) {
-        if(body[i][j] > 0) {
+        if(snake->getBodyAt(i, j) > 0) {
           u8g2_ptr->drawBox(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
       }
@@ -58,12 +57,17 @@ namespace Renderer {
     u8g2_ptr->setDrawColor(1);
   }
 
-  void startFrame() {
-    if(u8g2_ptr) u8g2_ptr->clearBuffer();
-  }
-
-  void endFrame() {
-    if(u8g2_ptr) u8g2_ptr->sendBuffer();
+  void renderAll(Snake *snake, Fruit *fruit) {
+    if(!u8g2_ptr) return;
+    u8g2_ptr->firstPage();
+    do {
+      renderBorder();
+      renderSnake(snake);
+      renderFruit(fruit);
+      if(!snake->isAlive()) {
+        renderGameOver(snake);
+      }
+    } while(u8g2_ptr->nextPage());
   }
 
 }
@@ -89,10 +93,9 @@ namespace Renderer {
   }
   
   void renderSnake(Snake *snake) {
-    const uint8_t **body = snake->getBody();
     for(int i = 0; i < Snake::BODY_WIDTH; i++) {
       for(int j = 0; j < Snake::BODY_HEIGHT; j++) {
-        if(body[i][j] > 0) {
+        if(snake->getBodyAt(i, j) > 0) {
           u8g2_DrawBox(&u8g2, i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
       }
@@ -115,11 +118,14 @@ namespace Renderer {
     u8g2_SetDrawColor(&u8g2, 1);
   }
 
-  void startFrame() {
+  void renderAll(Snake *snake, Fruit *fruit) {
     u8g2_ClearBuffer(&u8g2);
-  }
-
-  void endFrame() {
+    renderBorder();
+    renderSnake(snake);
+    renderFruit(fruit);
+    if(!snake->isAlive()) {
+      renderGameOver(snake);
+    }
     u8g2_SendBuffer(&u8g2);
   }
 

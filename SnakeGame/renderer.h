@@ -14,8 +14,7 @@ namespace Renderer {
   void renderSnake(Snake *snake);
   void renderFruit(Fruit *fruit);
   void renderGameOver(Snake *snake);
-  void startFrame();
-  void endFrame();
+  void renderAll(Snake *snake, Fruit *fruit);
 }
 
 int intToStr(int x, char str[], int d);

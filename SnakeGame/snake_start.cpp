@@ -9,11 +9,11 @@
 #endif
 
 #ifdef ARDUINO
-CREATE_INTERRUPT_BUTTON(buttonEnd, 1);
-CREATE_INTERRUPT_BUTTON(buttonUp, 23);
-CREATE_INTERRUPT_BUTTON(buttonDown, 19);
-CREATE_INTERRUPT_BUTTON(buttonLeft, 18);
-CREATE_INTERRUPT_BUTTON(buttonRight, 17);
+CREATE_INTERRUPT_BUTTON(buttonEnd, 5);
+CREATE_INTERRUPT_BUTTON(buttonUp, 4);
+CREATE_INTERRUPT_BUTTON(buttonDown, 3);
+CREATE_INTERRUPT_BUTTON(buttonLeft, 6);
+CREATE_INTERRUPT_BUTTON(buttonRight, 7);
 #else
 Button buttonUp;
 Button buttonDown;
@@ -28,6 +28,11 @@ Fruit fruit(&snake);
 void snake_start(void* u8g2) {
 #ifdef ARDUINO
 	Serial.println("Snake Game Started");
+	buttonEnd.begin();
+	buttonUp.begin();
+	buttonDown.begin();
+	buttonLeft.begin();
+	buttonRight.begin();
 	Renderer::initialize(u8g2);
 	
 	if(!snake.isAlive()) {
@@ -69,16 +74,11 @@ void snake_start(void* u8g2) {
 		snake.advance();
 		if(resetFruit) fruit.randomize(&snake);
 		  
-		Renderer::startFrame();
-		Renderer::renderBorder();
-		Renderer::renderSnake(&snake);
-		Renderer::renderFruit(&fruit);
+		Renderer::renderAll(&snake, &fruit);
 		if(!snake.isAlive()) {
-			Renderer::renderGameOver(&snake);
 			Serial.print("Game Over! Final Score: ");
 			Serial.println(snake.getPoints());
 		}
-		Renderer::endFrame();
 		
 		// Print game status periodically
 		if (millis() - lastPrintTime >= 2000) {
@@ -111,12 +111,7 @@ void snake_start(void* u8g2) {
 		snake.advance();
 		if(resetFruit) fruit.randomize(&snake);
 		  
-		Renderer::startFrame();
-		Renderer::renderBorder();
-		Renderer::renderSnake(&snake);
-		Renderer::renderFruit(&fruit);
-		if(!snake.isAlive()) Renderer::renderGameOver(&snake);
-		Renderer::endFrame();
+		Renderer::renderAll(&snake, &fruit);
 		
 		delay(500);
 	}

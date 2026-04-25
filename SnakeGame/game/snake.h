@@ -29,7 +29,7 @@ class Snake {
     const bool isAlive();
     const uint8_t getPoints();
     const Position getHeadPosition();
-    const uint8_t ** getBody();
+    uint8_t getBodyAt(int x, int y) const;
     const static uint8_t BODY_WIDTH = 16;
     const static uint8_t BODY_HEIGHT = 8;
   private:
@@ -38,5 +38,5 @@ class Snake {
     Direction turnDirection;
     Position head { Position(0, 0) };
     uint8_t bodyLength = 2;
-    uint8_t ** body;
+    uint8_t body[16][8];
 };

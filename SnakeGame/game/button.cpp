@@ -12,8 +12,13 @@ bool Button::isPressed() {
 
 #ifdef ARDUINO
 Button::Button(uint8_t pin, void (*isr)()) {
-  pinMode(pin, INPUT_PULLUP);
-  attachInterrupt(pin, isr, FALLING);
+  this->_pin = pin;
+  this->_isr = isr;
+}
+
+void Button::begin() {
+  pinMode(this->_pin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(this->_pin), this->_isr, FALLING);
 }
 #else
 Button::Button(){
