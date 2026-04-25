@@ -41,6 +41,8 @@ const uint8_t c_right = 6;
 
 void spacetrash_start();
 void flappybird_start();
+void reaction_test_start();
+void AJBoy_text();
 
 
 void setup(void) {
@@ -60,8 +62,9 @@ uint8_t gameMode = 0;
 const char *menuLabels[] = {
   "Space Trash",
   "Snake",
-  "Flappy Spaceship",
+  "Flappy Bird",
   "Pong",
+  "Reaction Test",
   "AJBoy text",
 };
 
@@ -70,8 +73,8 @@ uint8_t topIndex = 0;
 uint8_t menuIndex = 0;         // which item is highlighted
 const unsigned int MENU_ITEMS = sizeof(menuLabels) / sizeof(menuLabels[0]);
 
-char menuIndexCharBuff[3];
-char menuCharBuffer[20];
+char menuIndexCharBuff[5];
+char menuCharBuffer[30];
 void drawMenu() {
   u8g2.firstPage();
   do {
@@ -79,7 +82,7 @@ void drawMenu() {
 
     // Title
     itoa(menuIndex, menuIndexCharBuff, 10);
-    strcpy(menuCharBuffer, "=== AJBoy ===");
+    strcpy(menuCharBuffer, "    === AJBoy === ");
     strcat(menuCharBuffer, menuIndexCharBuff);
     u8g2.drawStr(0, 10, menuCharBuffer);
 
@@ -114,6 +117,12 @@ void handleMenuSelect(int grrrrr) {
       break;
     case 3:
       gameMode = 4;
+      break;
+    case 4:
+      gameMode = 5;
+      break;
+    case 5:
+      gameMode = 6;
       break;
   }
 }
@@ -163,6 +172,14 @@ void loop(void) {
       break;
     case 4:
       pong_start(&u8g2, c_down, c_up, c_button1, c_left);
+      gameMode = 0;
+      break;
+    case 5:
+      reaction_test_start();
+      gameMode = 0;
+      break;
+    case 6:
+      AJBoy_text();
       gameMode = 0;
       break;
     default:
