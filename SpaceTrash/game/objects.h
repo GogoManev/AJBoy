@@ -34,5 +34,6 @@ struct _st_obj_struct {
   /* LCD pixel position is x>>ST_FP and y>>ST_FP */
   int16_t x, y;
   int8_t x0, y0, x1, y1; /* object outline in pixel, reference point is at 0,0 */
+  uint8_t scored;        /* for flappy bird scoring */
 };
 typedef struct _st_obj_struct st_obj;

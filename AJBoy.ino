@@ -30,6 +30,8 @@ const uint8_t c_button1 = 2;
 #include "SpaceTrash/spacetrash.h"
 
 void spacetrash_start();
+void flappybird_start();
+
 
 void setup(void) {
   pinMode(c_up, INPUT_PULLUP);
@@ -98,6 +100,9 @@ void handleMenuSelect(int grrrrr) {
       //snake game
       gameMode = 2;
       break;
+    case 3:
+      gameMode = 3;
+      break;
   }
 }
 
@@ -139,6 +144,10 @@ void loop(void) {
       break;
     case 2:
       snake_start(&u8g2);
+      break;
+    case 3:
+      flappybird_start();
+      gameMode = 0;
       break;
     default:
       gameMode = 0;

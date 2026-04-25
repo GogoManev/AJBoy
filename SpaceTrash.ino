@@ -51,8 +51,6 @@ extern const uint8_t c_button1;
 
 u8g2_t *st_u8g2;
 
-u8g2_uint_t u8g_height_minus_one;
-
 
 #define ST_AREA_HEIGHT (st_u8g2->height - 8)
 #define ST_AREA_WIDTH (st_u8g2->width)
